@@ -75,21 +75,21 @@ const AddButton = (props: { onAddTask: (task: Partial<ITask>) => void }) => {
         <BottomSheetView style={bottomSheetStyles.bs}>
           <TextInput
             multiline={true}
-            numberOfLines={1}
+            numberOfLines={4}
             style={bottomSheetStyles.bsInput}
             placeholder="Aggiungi un task"
             onChangeText={handleTaskTitleInput}
             value={enteredTaskTitle}
           ></TextInput>
 
-          <TextInput
+          {/* <TextInput
             multiline={true}
-            numberOfLines={1}
+            numberOfLines={3}
             style={bottomSheetStyles.bsInput}
             placeholder="Aggiungi un task"
             onChangeText={handleTaskDescriptionInput}
             value={enteredTaskDescription}
-          ></TextInput>
+          ></TextInput> */}
 
           <View style={bottomSheetStyles.bsActions}>
             <IconButton
