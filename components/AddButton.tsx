@@ -1,20 +1,28 @@
 import { View, StyleSheet, TextInput } from "react-native";
 import { IconButton, Button } from "react-native-paper";
 
-import React, { useCallback, useMemo, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
 import BottomSheet, {
   BottomSheetBackdrop,
+  BottomSheetFooter,
   BottomSheetView,
 } from "@gorhom/bottom-sheet";
 import { ITask } from "../src/models/Task.model";
 
 const AddButton = (props: { onAddTask: (task: Partial<ITask>) => void }) => {
   const bottomSheetRef = useRef<BottomSheet>(null);
-  const snapPoints = useMemo(() => [180], []);
+  const snapPoints = useMemo(() => [140, 190], []);
 
   const [enteredTaskTitle, setEnteredTaskTitle] = useState("");
   const [enteredTaskDescription, setEnteredTaskDescription] = useState("");
+  const [descriptionInputOpen, setdescriptionInputOpen] = useState(false);
 
   const handleSheetChanges = useCallback((index: number) => {
     // todo
@@ -24,17 +32,37 @@ const AddButton = (props: { onAddTask: (task: Partial<ITask>) => void }) => {
     setEnteredTaskTitle(enteredText);
   };
 
+  useEffect(() => {
+    console.log(enteredTaskTitle);
+  }, [enteredTaskTitle]);
+
   const handleTaskDescriptionInput = (enteredText: string) => {
     setEnteredTaskDescription(enteredText);
   };
 
+  const toggleDescriptionInput = () => {
+    setdescriptionInputOpen((prev) => {
+      const next = !prev;
+      if (next) snapTo(1);
+      else snapTo(0);
+      return next;
+    });
+  };
+
+  const snapTo = (i: number) => {
+    bottomSheetRef.current?.snapToIndex(i);
+  };
+
   const addTask = () => {
     if (enteredTaskTitle)
+      // if (enteredTaskTitle || (enteredTaskDescription && descriptionInputOpen))
       props.onAddTask({
         title: enteredTaskTitle,
         description: enteredTaskDescription,
+        // description: descriptionInputOpen ? enteredTaskDescription : "",
       });
     setEnteredTaskTitle("");
+    setEnteredTaskDescription("");
     bottomSheetRef.current?.close();
   };
 
@@ -49,13 +77,48 @@ const AddButton = (props: { onAddTask: (task: Partial<ITask>) => void }) => {
     []
   );
 
+  const renderBSFooter = useCallback(
+    (props) => (
+      <BottomSheetFooter {...props}>
+        <View style={bottomSheetStyles.bsActions}>
+          <IconButton
+            icon="format-list-text"
+            size={24}
+            onPress={toggleDescriptionInput}
+          />
+
+          <IconButton
+            icon="calendar-check"
+            size={24}
+            onPress={() => console.log("Pressed")}
+          />
+
+          <IconButton
+            icon="heart-outline"
+            size={24}
+            onPress={() => console.log("Pressed")}
+          />
+
+          <View style={{ flex: 1 }}></View>
+          <Button
+            disabled={enteredTaskTitle === "" && enteredTaskDescription === ""}
+            onPress={addTask}
+          >
+            Salva
+          </Button>
+        </View>
+      </BottomSheetFooter>
+    ),
+    []
+  );
+
   return (
     <>
       <View style={styles.addIconContainer}>
         <View style={styles.addIconSpacer}>
           <View style={styles.addIconWrapper}>
             <IconButton
-              onPress={() => bottomSheetRef.current?.snapToIndex(0)}
+              onPress={() => (descriptionInputOpen ? snapTo(1) : snapTo(0))}
               icon="plus"
               size={24}
               style={styles.addIcon}
@@ -71,13 +134,17 @@ const AddButton = (props: { onAddTask: (task: Partial<ITask>) => void }) => {
         onChange={handleSheetChanges}
         enablePanDownToClose={true}
         backdropComponent={renderBackdrop}
+        containerHeight={130}
+        contentHeight={110}
+        keyboardBlurBehavior={"restore"}
+        footerComponent={renderBSFooter}
       >
         <BottomSheetView style={bottomSheetStyles.bs}>
           <TextInput
             multiline={true}
             numberOfLines={4}
-            style={bottomSheetStyles.bsInput}
-            placeholder="Aggiungi un task"
+            style={bottomSheetStyles.bsTitleInput}
+            placeholder="Nuova attività"
             onChangeText={handleTaskTitleInput}
             value={enteredTaskTitle}
           ></TextInput>
@@ -85,34 +152,14 @@ const AddButton = (props: { onAddTask: (task: Partial<ITask>) => void }) => {
           {/* <TextInput
             multiline={true}
             numberOfLines={3}
-            style={bottomSheetStyles.bsInput}
-            placeholder="Aggiungi un task"
+            style={{
+              ...bottomSheetStyles.bsTitleDescription,
+              display: descriptionInputOpen ? "flex" : "none",
+            }}
+            placeholder="Aggiungi i dettagli"
             onChangeText={handleTaskDescriptionInput}
             value={enteredTaskDescription}
           ></TextInput> */}
-
-          <View style={bottomSheetStyles.bsActions}>
-            <IconButton
-              icon="format-list-text"
-              size={24}
-              onPress={() => console.log("Pressed")}
-            />
-
-            <IconButton
-              icon="calendar-check"
-              size={24}
-              onPress={() => console.log("Pressed")}
-            />
-
-            <IconButton
-              icon="heart-outline"
-              size={24}
-              onPress={() => console.log("Pressed")}
-            />
-
-            <View style={{ flex: 1 }}></View>
-            <Button onPress={addTask}>Salva</Button>
-          </View>
         </BottomSheetView>
       </BottomSheet>
     </>
@@ -124,16 +171,27 @@ export default AddButton;
 const bottomSheetStyles = StyleSheet.create({
   bs: {
     marginHorizontal: 16,
-    maxHeight: 400,
+    height: 1200,
   },
   bsActions: {
     flexDirection: "row",
     alignItems: "center",
   },
-  bsInput: {
+  bsTitleInput: {
     width: "100%",
-    paddingHorizontal: 16,
-    backgroundColor: "white",
+    // paddingHorizontal: 16,
+    maxHeight: 60, // 8 lines 112
+    lineHeight: 15,
+    fontSize: 14,
+  },
+  bsTitleDescription: {
+    width: "100%",
+    // paddingHorizontal: 16,
+    lineHeight: 13,
+    marginTop: 8,
+    maxHeight: 39, // 6 lines 78
+    fontSize: 12,
+    opacity: 0.72,
   },
 });
 
@@ -147,7 +205,7 @@ const styles = StyleSheet.create({
   },
   addIconSpacer: {
     padding: 3,
-    borderRadius: 400,
+    borderRadius: 60,
     borderColor: "#eee",
     backgroundColor: "#fff",
   },
