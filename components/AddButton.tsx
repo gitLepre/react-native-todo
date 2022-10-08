@@ -53,6 +53,7 @@ const AddButton = (props: { onAddTask: (task: Partial<ITask>) => void }) => {
       });
     setEnteredTaskTitle("");
     setEnteredTaskDescription("");
+    setdescriptionInputOpen(false);
     bottomSheetRef.current?.close();
   };
 
