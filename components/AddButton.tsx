@@ -1,13 +1,7 @@
 import { View, StyleSheet, TextInput } from "react-native";
 import { IconButton, Button } from "react-native-paper";
 
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { useCallback, useMemo, useRef, useState } from "react";
 
 import BottomSheet, {
   BottomSheetBackdrop,
@@ -31,10 +25,6 @@ const AddButton = (props: { onAddTask: (task: Partial<ITask>) => void }) => {
   const handleTaskTitleInput = (enteredText: string) => {
     setEnteredTaskTitle(enteredText);
   };
-
-  useEffect(() => {
-    console.log(enteredTaskTitle);
-  }, [enteredTaskTitle]);
 
   const handleTaskDescriptionInput = (enteredText: string) => {
     setEnteredTaskDescription(enteredText);
@@ -77,41 +67,6 @@ const AddButton = (props: { onAddTask: (task: Partial<ITask>) => void }) => {
     []
   );
 
-  const renderBSFooter = useCallback(
-    (props) => (
-      <BottomSheetFooter {...props}>
-        <View style={bottomSheetStyles.bsActions}>
-          <IconButton
-            icon="format-list-text"
-            size={24}
-            onPress={toggleDescriptionInput}
-          />
-
-          <IconButton
-            icon="calendar-check"
-            size={24}
-            onPress={() => console.log("Pressed")}
-          />
-
-          <IconButton
-            icon="heart-outline"
-            size={24}
-            onPress={() => console.log("Pressed")}
-          />
-
-          <View style={{ flex: 1 }}></View>
-          <Button
-            disabled={enteredTaskTitle === "" && enteredTaskDescription === ""}
-            onPress={addTask}
-          >
-            Salva
-          </Button>
-        </View>
-      </BottomSheetFooter>
-    ),
-    []
-  );
-
   return (
     <>
       <View style={styles.addIconContainer}>
@@ -137,7 +92,39 @@ const AddButton = (props: { onAddTask: (task: Partial<ITask>) => void }) => {
         containerHeight={130}
         contentHeight={110}
         keyboardBlurBehavior={"restore"}
-        footerComponent={renderBSFooter}
+        footerComponent={(props) => (
+          <BottomSheetFooter {...props}>
+            <View style={bottomSheetStyles.bsActions}>
+              <IconButton
+                icon="format-list-text"
+                size={24}
+                onPress={toggleDescriptionInput}
+              />
+
+              <IconButton
+                icon="calendar-check"
+                size={24}
+                onPress={() => console.log("Pressed")}
+              />
+
+              <IconButton
+                icon="heart-outline"
+                size={24}
+                onPress={() => console.log("Pressed")}
+              />
+
+              <View style={{ flex: 1 }}></View>
+              <Button
+                disabled={
+                  enteredTaskTitle === "" && enteredTaskDescription === ""
+                }
+                onPress={addTask}
+              >
+                Salva
+              </Button>
+            </View>
+          </BottomSheetFooter>
+        )}
       >
         <BottomSheetView style={bottomSheetStyles.bs}>
           <TextInput
@@ -149,7 +136,7 @@ const AddButton = (props: { onAddTask: (task: Partial<ITask>) => void }) => {
             value={enteredTaskTitle}
           ></TextInput>
 
-          {/* <TextInput
+          <TextInput
             multiline={true}
             numberOfLines={3}
             style={{
@@ -159,7 +146,7 @@ const AddButton = (props: { onAddTask: (task: Partial<ITask>) => void }) => {
             placeholder="Aggiungi i dettagli"
             onChangeText={handleTaskDescriptionInput}
             value={enteredTaskDescription}
-          ></TextInput> */}
+          ></TextInput>
         </BottomSheetView>
       </BottomSheet>
     </>
