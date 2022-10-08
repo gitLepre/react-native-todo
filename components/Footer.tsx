@@ -18,7 +18,6 @@ export const Footer = () => {
           icon="menu"
           size={24}
           onPress={() => console.log("Pressed")}
-          style={styles.icon}
           iconColor={MD3Colors.primary0}
         />
 
@@ -27,7 +26,6 @@ export const Footer = () => {
           size={24}
           iconColor={MD3Colors.primary0}
           onPress={() => console.log("Pressed")}
-          style={styles.icon}
         />
       </View>
     </View>
@@ -63,9 +61,6 @@ const styles = StyleSheet.create({
   footer: {
     flexDirection: "row",
     justifyContent: "space-between",
-  },
-  icon: {
-    marginVertical: 8,
   },
 });
 

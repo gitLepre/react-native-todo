@@ -47,6 +47,20 @@ export default function App() {
     ]);
   };
 
+  const setTaskPriority = (taskId: string, priority: boolean) => {
+    setTasks((prev) =>
+      prev.map((t) => (t.id === taskId ? { ...t, priority: priority } : t))
+    );
+  };
+
+  const setTaskCompletionState = (taskId: string, completionState: boolean) => {
+    setTasks((prev) =>
+      prev.map((t) =>
+        t.id === taskId ? { ...t, completed: completionState } : t
+      )
+    );
+  };
+
   const deleteTask = (id: string) => {
     setTasks((currentTasks) => currentTasks.filter((t) => t.id !== id));
   };
@@ -62,7 +76,13 @@ export default function App() {
             <FlatList
               data={tasks}
               renderItem={(x) => {
-                return <Task task={x.item}></Task>;
+                return (
+                  <Task
+                    task={x.item}
+                    setTaskPriority={setTaskPriority}
+                    setTaskCompletionState={setTaskCompletionState}
+                  ></Task>
+                );
               }}
             />
           </View>

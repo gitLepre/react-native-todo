@@ -85,7 +85,7 @@ const AddButton = (props: { onAddTask: (task: Partial<ITask>) => void }) => {
           />
 
           <IconButton
-            icon={prioritary ? "heart" : "heart-outline"}
+            icon={prioritary ? "star" : "star-outline"}
             size={24}
             onPress={toggleIsPrioritary}
           />
