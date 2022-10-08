@@ -15,21 +15,16 @@ const AddButton = (props: { onAddTask: (task: Partial<ITask>) => void }) => {
   const snapPoints = useMemo(() => [140, 190], []);
 
   const [enteredTaskTitle, setEnteredTaskTitle] = useState("");
-  const [enteredTaskDescription, setEnteredTaskDescription] = useState("");
-  const [descriptionInputOpen, setdescriptionInputOpen] = useState(false);
-
-  const handleSheetChanges = useCallback((index: number) => {
-    // todo
-  }, []);
-
   const handleTaskTitleInput = (enteredText: string) => {
     setEnteredTaskTitle(enteredText);
   };
 
+  const [enteredTaskDescription, setEnteredTaskDescription] = useState("");
   const handleTaskDescriptionInput = (enteredText: string) => {
     setEnteredTaskDescription(enteredText);
   };
 
+  const [descriptionInputOpen, setdescriptionInputOpen] = useState(false);
   const toggleDescriptionInput = () => {
     setdescriptionInputOpen((prev) => {
       const next = !prev;
@@ -39,21 +34,26 @@ const AddButton = (props: { onAddTask: (task: Partial<ITask>) => void }) => {
     });
   };
 
+  const [prioritary, setIsPrioritary] = useState(false);
+  const toggleIsPrioritary = () => {
+    setIsPrioritary((prev) => !prev);
+  };
+
   const snapTo = (i: number) => {
     bottomSheetRef.current?.snapToIndex(i);
   };
 
   const addTask = () => {
-    if (enteredTaskTitle)
-      // if (enteredTaskTitle || (enteredTaskDescription && descriptionInputOpen))
+    if (enteredTaskTitle || (enteredTaskDescription && descriptionInputOpen))
       props.onAddTask({
         title: enteredTaskTitle,
-        description: enteredTaskDescription,
-        // description: descriptionInputOpen ? enteredTaskDescription : "",
+        description: descriptionInputOpen ? enteredTaskDescription : "",
+        important: prioritary,
       });
     setEnteredTaskTitle("");
     setEnteredTaskDescription("");
     setdescriptionInputOpen(false);
+    setIsPrioritary(false);
     bottomSheetRef.current?.close();
   };
 
@@ -66,6 +66,44 @@ const AddButton = (props: { onAddTask: (task: Partial<ITask>) => void }) => {
       />
     ),
     []
+  );
+
+  const renderBSFooter = useCallback(
+    (props: any) => (
+      <BottomSheetFooter {...props}>
+        <View style={bottomSheetStyles.bsActions}>
+          <IconButton
+            icon="format-list-text"
+            size={24}
+            onPress={toggleDescriptionInput}
+          />
+
+          <IconButton
+            icon="calendar-check"
+            size={24}
+            onPress={() => console.log("Pressed")}
+          />
+
+          <IconButton
+            icon={prioritary ? "heart" : "heart-outline"}
+            size={24}
+            onPress={toggleIsPrioritary}
+          />
+
+          <View style={{ flex: 1 }}></View>
+          <Button
+            disabled={
+              enteredTaskTitle === "" &&
+              (enteredTaskDescription === "" || !descriptionInputOpen)
+            }
+            onPress={addTask}
+          >
+            Salva
+          </Button>
+        </View>
+      </BottomSheetFooter>
+    ),
+    [prioritary, descriptionInputOpen, enteredTaskTitle, enteredTaskDescription]
   );
 
   return (
@@ -87,45 +125,12 @@ const AddButton = (props: { onAddTask: (task: Partial<ITask>) => void }) => {
         ref={bottomSheetRef}
         index={-1}
         snapPoints={snapPoints}
-        onChange={handleSheetChanges}
         enablePanDownToClose={true}
         backdropComponent={renderBackdrop}
         containerHeight={130}
         contentHeight={110}
         keyboardBlurBehavior={"restore"}
-        footerComponent={(props) => (
-          <BottomSheetFooter {...props}>
-            <View style={bottomSheetStyles.bsActions}>
-              <IconButton
-                icon="format-list-text"
-                size={24}
-                onPress={toggleDescriptionInput}
-              />
-
-              <IconButton
-                icon="calendar-check"
-                size={24}
-                onPress={() => console.log("Pressed")}
-              />
-
-              <IconButton
-                icon="heart-outline"
-                size={24}
-                onPress={() => console.log("Pressed")}
-              />
-
-              <View style={{ flex: 1 }}></View>
-              <Button
-                disabled={
-                  enteredTaskTitle === "" && enteredTaskDescription === ""
-                }
-                onPress={addTask}
-              >
-                Salva
-              </Button>
-            </View>
-          </BottomSheetFooter>
-        )}
+        footerComponent={renderBSFooter}
       >
         <BottomSheetView style={bottomSheetStyles.bs}>
           <TextInput

@@ -41,7 +41,7 @@ export default function App() {
         id: Math.random().toString(),
         title: task?.title || "",
         description: task?.description || "",
-        important: false,
+        important: task?.important || false,
         completed: false,
       },
     ]);

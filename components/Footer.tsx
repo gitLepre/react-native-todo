@@ -1,7 +1,7 @@
 import { View } from "react-native";
 import React from "react";
 
-import { IconButton } from "react-native-paper";
+import { IconButton, MD3Colors } from "react-native-paper";
 import { StyleSheet } from "react-native";
 
 export const Footer = () => {
@@ -19,11 +19,13 @@ export const Footer = () => {
           size={24}
           onPress={() => console.log("Pressed")}
           style={styles.icon}
+          iconColor={MD3Colors.primary0}
         />
 
         <IconButton
           icon="dots-vertical"
           size={24}
+          iconColor={MD3Colors.primary0}
           onPress={() => console.log("Pressed")}
           style={styles.icon}
         />
